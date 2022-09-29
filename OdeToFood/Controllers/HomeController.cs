@@ -23,6 +23,15 @@ namespace OdeToFood.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            var model = new AboutModel();
+            model.Name = "Hendris";
+            model.Location = "Tunneli talu, Lehetu";
+
+            return View(model);
+        }
+
         public IActionResult Privacy()
         {
             return View();
