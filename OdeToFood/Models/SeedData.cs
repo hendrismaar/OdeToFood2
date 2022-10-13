@@ -9,13 +9,19 @@ namespace OdeToFood.Models
 {
     public static class SeedData
     {
-        public static void SeedRestaurant(ApplicationDbContext context)
+        public static void Initialize(IServiceProvider serviceProvider)
         {
-            if (!context.Restaurants.Any())
+            using (var context = new ApplicationDbContext(
+                serviceProvider.GetRequiredService<
+                    DbContextOptions<ApplicationDbContext>>()))
             {
-                for (int i = 1; i <= 1000; i++)
+                // Look for any movies.
+                if (context.Restaurants.Any())
                 {
-                    context.Restaurants.AddRange(
+                    return;   // DB has been seeded
+                }
+
+                context.Restaurants.AddRange(
                     new Restaurant
                     {
                         Name = "Sabatino's",
@@ -45,7 +51,6 @@ namespace OdeToFood.Models
                         //}
                     });
                     context.SaveChanges();
-                }
             }
         }
     }
