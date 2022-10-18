@@ -16,7 +16,8 @@ namespace OdeToFood.Controllers
         public IActionResult Search(string name = "unknown")
         {
             var message = HtmlEncoder.Default.Encode(name);
-            //return Content(message)
+            throw new Exception("Something terrible happaneed:(");
+            return Content(message);
             //return new EmptyResult()
             return File("/css/site.css", "text/css");
             //return File("/css/site.css", "text/css");
@@ -24,7 +25,7 @@ namespace OdeToFood.Controllers
             //return Redirect("https://www.tthk.ee");
             //return RedirectToRoute("default",new { controller = "cuisine", action = "Second", count = 5 });
             //return RedirectToAction(nameof(Second), new { count = 5 });
-            return RedirectToRoute("default", new { controller = "Home", action = "About" });
+            //return RedirectToRoute("default", new { controller = "Home", action = "About" });
         }
 
         public IActionResult Second(int count)
