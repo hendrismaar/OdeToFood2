@@ -22,6 +22,11 @@ namespace OdeToFood.Data
 					new Restaurant { Name = "Sabatino's", City = "Baltimore", Country = "USA" },
 					new Restaurant { Name = "Great Lake", City = "Chicago", Country = "USA" },
 					new Restaurant { Name = "Smaka", City = "Gothenburg", Country = "Sweden", Reviews = new List<RestaurantReview> { new RestaurantReview { Rating = 9, Body = "Great food!" } } });
+                for (int i = 0; i < 1000 ; i++)
+                {
+					new Restaurant { Name = $"{i}. coming", City = "Nowhere", Country = "USA" };
+                }
+				
 				context.SaveChanges();
 			}
 		}
