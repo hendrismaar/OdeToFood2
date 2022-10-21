@@ -32,19 +32,7 @@ namespace OdeToFood.Controllers
                                 City = r.City,
                                 Country = r.Country,
                                 CountOfReviews = r.Reviews.Count()
-                            }
-                            );
-
-            //var model = from r in _db.Restaurants
-            //												orderby r.Reviews.Average(review => review.Rating)
-            //												select new RestaurantListViewModel
-            //												{
-            //													Id = r.Id,
-            //													Name = r.Name,
-            //													City = r.City,
-            //													Country = r.Country,
-            //													CountOfReviews = r.Reviews.Count()
-            //		
+                            });
 
             if (Request.IsAjaxRequest())
             {
