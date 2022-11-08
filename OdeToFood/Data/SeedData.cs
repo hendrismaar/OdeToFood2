@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OdeToFood.Models;
 using System;
@@ -10,6 +11,7 @@ namespace OdeToFood.Data
 {
 	public static class SeedData
 	{
+		private const string ROLE_ADMIN = "Admin";
 		public static void Initialize(IServiceProvider serviceProvider)
 		{
 			using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
@@ -29,6 +31,39 @@ namespace OdeToFood.Data
                 }
 				
 				context.SaveChanges();
+			}
+		}
+
+		public static void SeedIdentity(UserManager<OdeToFoodUser> userManager, RoleManager<IdentityRole> roleManager)
+		{
+			var user =  userManager.FindByNameAsync("maarhendris@gmail.com").Result;
+			
+			if (user == null)
+			{
+				user = new OdeToFoodUser();
+				user.Email = "maarhendris@gmail.com";
+				user.EmailConfirmed = true;
+				user.UserName = "maarhendris@gmail.com";
+				IdentityResult result = userManager.CreateAsync(user).Result;
+				if (result.Succeeded)
+				{
+					user.PasswordHash = userManager.PasswordHasher.HashPassword(user, "Maarhendris1!");
+					var _ = userManager.UpdateAsync(user).Result;
+				}
+				else
+				{
+					throw new Exception($"User creation failed: {result.Errors.FirstOrDefault()}");
+				}
+			}
+            var role = roleManager.FindByNameAsync("Admin").Result;
+            if (role == null)
+			{
+				role = new IdentityRole(ROLE_ADMIN);
+				IdentityResult result = roleManager.CreateAsync(role).Result;
+				if (result.Succeeded)
+				{
+					userManager.AddToRoleAsync(user, ROLE_ADMIN);
+				}
 			}
 		}
 	}
