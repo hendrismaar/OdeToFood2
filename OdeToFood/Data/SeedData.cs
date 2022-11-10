@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using OdeToFood.Models;
@@ -11,7 +12,7 @@ namespace OdeToFood.Data
 {
 	public static class SeedData
 	{
-		private const string ROLE_ADMIN = "Admin";
+		public const string ROLE_ADMIN = "Admin";
 		public static void Initialize(IServiceProvider serviceProvider)
 		{
 			using (var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
@@ -34,37 +35,35 @@ namespace OdeToFood.Data
 			}
 		}
 
-		public static void SeedIdentity(UserManager<OdeToFoodUser> userManager, RoleManager<IdentityRole> roleManager)
+		public static async Task SeedIdentity(UserManager<OdeToFoodUser> userManager, RoleManager<OdeToFoodRole> roleManager)
 		{
-			var user =  userManager.FindByNameAsync("maarhendris@gmail.com").Result;
-			
+			var user = await userManager.FindByNameAsync("maarhendris@gmail.com");
 			if (user == null)
 			{
 				user = new OdeToFoodUser();
 				user.Email = "maarhendris@gmail.com";
 				user.EmailConfirmed = true;
 				user.UserName = "maarhendris@gmail.com";
-				IdentityResult result = userManager.CreateAsync(user).Result;
-				if (result.Succeeded)
+				var userResult = await userManager.CreateAsync(user);
+				if (!userResult.Succeeded)
 				{
-					user.PasswordHash = userManager.PasswordHasher.HashPassword(user, "Maarhendris1!");
-					var _ = userManager.UpdateAsync(user).Result;
+					throw new Exception($"User creation failed: {userResult.Errors.FirstOrDefault()}");
 				}
-				else
-				{
-					throw new Exception($"User creation failed: {result.Errors.FirstOrDefault()}");
-				}
+				await userManager.AddPasswordAsync(user, "Maar123!");
 			}
-            var role = roleManager.FindByNameAsync("Admin").Result;
-            if (role == null)
+			var role = await roleManager.FindByNameAsync(ROLE_ADMIN);
+			if (role == null)
 			{
-				role = new IdentityRole(ROLE_ADMIN);
-				IdentityResult result = roleManager.CreateAsync(role).Result;
-				if (result.Succeeded)
+				role = new OdeToFoodRole();
+				role.Name = ROLE_ADMIN;
+				role.NormalizedName = ROLE_ADMIN;
+				var roleResult = roleManager.CreateAsync(role).Result;
+				if (!roleResult.Succeeded)
 				{
-					userManager.AddToRoleAsync(user, ROLE_ADMIN);
+					throw new Exception(roleResult.Errors.First().Description);
 				}
 			}
+			await userManager.AddToRoleAsync(user, ROLE_ADMIN);
 		}
 	}
 }
