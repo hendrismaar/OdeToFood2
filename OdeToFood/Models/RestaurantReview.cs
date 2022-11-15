@@ -11,7 +11,7 @@ namespace OdeToFood.Models
 		public int Id { get; set; }
 		[Range(1, 10)]
 		public int Rating { get; set; }
-		[Required]
+		[Required(ErrorMessageResourceType=typeof(Resources.Models.RestaurantReview), ErrorMessageResourceName ="Required")]
 		[StringLength(1024)]
 		public string Body { get; set; }
 		[Display(Name = "Username")]
