@@ -1,4 +1,6 @@
 ﻿using OdeToFood.Models;
+using OdeToFood.Tests.Features;
+using System.Linq;
 
 namespace OdeToFood.Tests.Controllers
 {
@@ -11,9 +13,11 @@ namespace OdeToFood.Tests.Controllers
             _restaurant = restaurant;
         }
         
-        public RatingResult ComputeRating(int numberOfReviews)
+        public RatingResult ComputeResult(IRatingAlgorithm algorithm, int numberOfReviewsToUse)
         {
-            return new RatingResult() { Rating = 4 };
+            var filteredReviews = _restaurant.Reviews.Take(numberOfReviewsToUse);
+
+            return algorithm.Compute(filteredReviews.ToList());
         }
     }
 }
